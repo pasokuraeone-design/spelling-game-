@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英語のスペル学習</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #6366F1;
+      --success-color: #10B981;
+      --error-color: #EF4444;
+      --text-dark: #1F2937;
+      --text-light: #6B7280;
+      --card-bg: #F3F4F6;
+      --keyboard-bg: #F9FAFB;
+      --key-bg: #FFFFFF;
+      --key-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --key-active-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      font-family: 'Zen Maru Gothic', 'Zen Kaku Gothic New', sans-serif;
+      background: linear-gradient(135deg, #E0E7FF 0%, #F3E8FF 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      border-radius: 2rem;
+      padding: 2rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .menu-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .menu-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 2rem;
+      font-family: 'Zen Maru Gothic', sans-serif;
+    }
+
+    .category-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    @media (max-width: 600px) {
+      .category-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .category-button {
+      padding: 2rem 1.5rem;
+      border: none;
+      border-radius: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+
+    .category-button:active {
+      transform: scale(0.95);
+    }
+
+    .category-button.numbers {
+      background: linear-gradient(135deg, #93C5FD, #60A5FA);
+      color: white;
+    }
+
+    .category-button.days {
+      background: linear-gradient(135deg, #FCD34D, #FBBF24);
+      color: #1F2937;
+    }
+
+    .category-button.months {
+      background: linear-gradient(135deg, #86EFAC, #4ADE80);
+      color: white;
+    }
+
+    .category-button.ordinals {
+      background: linear-gradient(135deg, #F8B4D6, #F472B6);
+      color: white;
+    }
+
+    .game-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+
+    .back-button {
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button:hover {
+      background: #E5E7EB;
+    }
+
+    .back-button:active {
+      transform: scale(0.95);
+    }
+
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      flex: 1;
+    }
+
+    .progress-text {
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-weight: 800;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      min-width: 3rem;
+      text-align: center;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 0.5rem;
+      background: #E0E7FF;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success-color);
+      border-radius: 1rem;
+      transition: width 0.3s ease-out;
+    }
+
+    .question-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .japanese-word {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      font-family: 'Zen Maru Gothic', sans-serif;
+    }
+
+    .correct-feedback {
+      position: absolute;
+      top: -2rem;
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--success-color);
+      background: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+      z-index: 10;
+      animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes bounce {
+      0% { transform: scale(0.5); opacity: 0; }
+      80% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .input-area {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      min-height: 4.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .letter-box {
+      width: 2.5rem;
+      height: 3.5rem;
+      border-bottom: 4px solid var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      transition: all 0.2s ease;
+    }
+
+    .letter-box.space {
+      border-bottom-color: transparent;
+      width: 1.5rem;
+    }
+
+    .letter-box.current {
+      border-bottom-color: #FBBF24;
+      transform: translateY(-2px);
+    }
+
+    .letter-box.typed {
+      border-bottom-color: var(--success-color);
+      color: var(--primary-color);
+    }
+
+    .letter-box.error {
+      border-bottom-color: var(--error-color);
+      color: var(--error-color);
+      animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: var(--keyboard-bg);
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .keyboard-key {
+      flex: 1 1 calc(20% - 0.8rem);
+      min-width: 3.5rem;
+      max-width: 4.5rem;
+      height: 4rem;
+      background: var(--key-bg);
+      border: none;
+      border-radius: 0.8rem;
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      box-shadow: var(--key-shadow);
+      cursor: pointer;
+      transition: all 0.1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .keyboard-key:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: var(--key-active-shadow);
+      background: #f3f4f6;
+    }
+
+    .keyboard-key:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .keyboard-key-hidden {
+      opacity: 0 !important;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.8);
+    }
+
+    .result-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+    }
+
+    .trophy {
+      font-size: 6rem;
+      margin-bottom: 1rem;
+      animation: bounce-trophy 1s ease infinite alternate;
+    }
+
+    @keyframes bounce-trophy {
+      from { transform: translateY(0); }
+      to { transform: translateY(-20px); }
+    }
+
+    .result-screen h2 {
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-screen p {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 1.2rem;
+      color: var(--text-dark);
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    .primary-button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 2rem;
+      font-size: 1.2rem;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-weight: 700;
+      box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      margin-top: 1rem;
+    }
+
+    .primary-button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // ============ データ定義 ============
+    const categories = [
+      { id: 'numbers', name: '数字' },
+      { id: 'days', name: '曜日' },
+      { id: 'months', name: '月' },
+      { id: 'ordinals', name: '序数（1番目〜10番目）' },
+    ];
+
+    const wordList = [
+      // Numbers
+      { id: 'num-1', categoryId: 'numbers', english: 'one', japanese: '１（いち）' },
+      { id: 'num-2', categoryId: 'numbers', english: 'two', japanese: '２（に）' },
+      { id: 'num-3', categoryId: 'numbers', english: 'three', japanese: '３（さん）' },
+      { id: 'num-4', categoryId: 'numbers', english: 'four', japanese: '４（よん）' },
+      { id: 'num-5', categoryId: 'numbers', english: 'five', japanese: '５（ご）' },
+      { id: 'num-6', categoryId: 'numbers', english: 'six', japanese: '６（ろく）' },
+      { id: 'num-7', categoryId: 'numbers', english: 'seven', japanese: '７（なな）' },
+      { id: 'num-8', categoryId: 'numbers', english: 'eight', japanese: '８（はち）' },
+      { id: 'num-9', categoryId: 'numbers', english: 'nine', japanese: '９（きゅう）' },
+      { id: 'num-10', categoryId: 'numbers', english: 'ten', japanese: '１０（じゅう）' },
+      { id: 'num-11', categoryId: 'numbers', english: 'eleven', japanese: '１１（じゅういち）' },
+      { id: 'num-12', categoryId: 'numbers', english: 'twelve', japanese: '１２（じゅうに）' },
+      { id: 'num-13', categoryId: 'numbers', english: 'thirteen', japanese: '１３（じゅうさん）' },
+      { id: 'num-20', categoryId: 'numbers', english: 'twenty', japanese: '２０（にじゅう）' },
+      { id: 'num-100', categoryId: 'numbers', english: 'one hundred', japanese: '１００（ひゃく）' },
+      { id: 'num-1000', categoryId: 'numbers', english: 'one thousand', japanese: '１０００（せん）' },
+
+      // Days
+      { id: 'day-sun', categoryId: 'days', english: 'Sunday', japanese: '日曜日' },
+      { id: 'day-mon', categoryId: 'days', english: 'Monday', japanese: '月曜日' },
+      { id: 'day-tue', categoryId: 'days', english: 'Tuesday', japanese: '火曜日' },
+      { id: 'day-wed', categoryId: 'days', english: 'Wednesday', japanese: '水曜日' },
+      { id: 'day-thu', categoryId: 'days', english: 'Thursday', japanese: '木曜日' },
+      { id: 'day-fri', categoryId: 'days', english: 'Friday', japanese: '金曜日' },
+      { id: 'day-sat', categoryId: 'days', english: 'Saturday', japanese: '土曜日' },
+
+      // Months
+      { id: 'mon-1', categoryId: 'months', english: 'January', japanese: '１月' },
+      { id: 'mon-2', categoryId: 'months', english: 'February', japanese: '２月' },
+      { id: 'mon-3', categoryId: 'months', english: 'March', japanese: '３月' },
+      { id: 'mon-4', categoryId: 'months', english: 'April', japanese: '４月' },
+      { id: 'mon-5', categoryId: 'months', english: 'May', japanese: '５月' },
+      { id: 'mon-6', categoryId: 'months', english: 'June', japanese: '６月' },
+      { id: 'mon-7', categoryId: 'months', english: 'July', japanese: '７月' },
+      { id: 'mon-8', categoryId: 'months', english: 'August', japanese: '８月' },
+      { id: 'mon-9', categoryId: 'months', english: 'September', japanese: '９月' },
+      { id: 'mon-10', categoryId: 'months', english: 'October', japanese: '１０月' },
+      { id: 'mon-11', categoryId: 'months', english: 'November', japanese: '１１月' },
+      { id: 'mon-12', categoryId: 'months', english: 'December', japanese: '１２月' },
+
+      // Ordinals (1st-10th)
+      { id: 'ord-1', categoryId: 'ordinals', english: 'first', japanese: '１番目（1st）' },
+      { id: 'ord-2', categoryId: 'ordinals', english: 'second', japanese: '２番目（2nd）' },
+      { id: 'ord-3', categoryId: 'ordinals', english: 'third', japanese: '３番目（3rd）' },
+      { id: 'ord-4', categoryId: 'ordinals', english: 'fourth', japanese: '４番目（4th）' },
+      { id: 'ord-5', categoryId: 'ordinals', english: 'fifth', japanese: '５番目（5th）' },
+      { id: 'ord-6', categoryId: 'ordinals', english: 'sixth', japanese: '６番目（6th）' },
+      { id: 'ord-7', categoryId: 'ordinals', english: 'seventh', japanese: '７番目（7th）' },
+      { id: 'ord-8', categoryId: 'ordinals', english: 'eighth', japanese: '８番目（8th）' },
+      { id: 'ord-9', categoryId: 'ordinals', english: 'ninth', japanese: '９番目（9th）' },
+      { id: 'ord-10', categoryId: 'ordinals', english: 'tenth', japanese: '１０番目（10th）' },
+    ];
+
+    // ============ ユーティリティ ============
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    // ============ ゲーム状態管理 ============
+    let gameState = {
+      screen: 'menu', // 'menu' | 'game' | 'result'
+      categoryId: null,
+      words: [],
+      currentIndex: 0,
+      currentInput: '',
+      gameStatus: 'playing', // 'playing' | 'correct' | 'finished'
+      errorIndex: null,
+    };
+
+    // ============ レンダリング ============
+    function render() {
+      const app = document.getElementById('app');
+      
+      if (gameState.screen === 'menu') {
+        app.innerHTML = renderMenu();
+      } else if (gameState.screen === 'game') {
+        app.innerHTML = renderGame();
+      }
+
+      attachEventListeners();
+    }
+
+    function renderMenu() {
+      return `
+        <div class="menu-screen">
+          <h1 class="menu-title">英語のスペル学習</h1>
+          <div class="category-buttons">
+            ${categories.map(cat => `
+              <button class="category-button ${cat.id}" onclick="startGame('${cat.id}')">
+                ${cat.name}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGame() {
+      const currentWord = gameState.words[gameState.currentIndex];
+      if (!currentWord) return '';
+
+      const totalWords = gameState.words.length;
+      const progressPercent = ((gameState.currentIndex + 1) / totalWords) * 100;
+
+      let inputHTML = '';
+      for (let i = 0; i < currentWord.english.length; i++) {
+        const char = currentWord.english[i];
+        const isSpace = char === ' ';
+        const isTyped = i < gameState.currentInput.length;
+        const isError = i === gameState.errorIndex;
+        const isCurrent = i === gameState.currentInput.length && gameState.gameStatus === 'playing';
+
+        let className = 'letter-box';
+        if (isSpace) className += ' space';
+        if (isTyped) className += ' typed';
+        if (isError) className += ' error';
+        if (isCurrent) className += ' current';
+
+        inputHTML += `<div class="${className}">${isTyped ? gameState.currentInput[i] : ''}</div>`;
+      }
+
+      const feedbackHTML = gameState.gameStatus === 'correct' ? '<div class="correct-feedback">Perfect! 🎉</div>' : '';
+
+      if (gameState.gameStatus === 'finished') {
+        return `
+          <div class="result-screen">
+            <div class="trophy">🏆</div>
+            <h2>All Clear!</h2>
+            <p>すごい！ぜんぶクリアしました！</p>
+            <button class="primary-button" onclick="goToMenu()">ちがうカテゴリであそぶ</button>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="game-screen">
+          <div class="header">
+            <button class="back-button" onclick="goToMenu()">◀ もどる</button>
+            <div class="progress-bar" style="margin: 0;">
+              <span class="progress-text">${gameState.currentIndex + 1} / ${totalWords}</span>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: ${progressPercent}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="question-area">
+            <h2 class="japanese-word">${currentWord.japanese}</h2>
+            ${feedbackHTML}
+          </div>
+
+          <div class="input-area">
+            ${inputHTML}
+          </div>
+
+          <div class="keyboard">
+            ${renderKeyboard(currentWord.english)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderKeyboard(targetWord) {
+      const cleanWord = targetWord.replace(/[^a-zA-Z]/g, '');
+      const chars = cleanWord.split('');
+      const shuffled = shuffleArray([...chars]);
+      
+      // 入力済み文字を判定
+      const inputChars = gameState.currentInput.replace(/[^a-zA-Z]/g, '').toLowerCase().split('');
+      const availableKeys = shuffled.map((char, idx) => {
+        const usedIdx = inputChars.indexOf(char.toLowerCase());
+        const used = usedIdx !== -1;
+        if (used) inputChars.splice(usedIdx, 1);
+        return { char, id: `${char}-${idx}`, used };
+      });
+
+      let html = '<div class="keyboard-row">';
+      availableKeys.forEach((key, idx) => {
+        const disabled = key.used ? 'disabled' : '';
+        const hiddenClass = key.used ? 'keyboard-key-hidden' : '';
+        html += `<button class="keyboard-key ${hiddenClass}" onclick="handleKeyPress('${key.char}')" ${disabled}>${key.char}</button>`;
+      });
+      html += '</div>';
+
+      return html;
+    }
+
+    // ============ イベントハンドラ ============
+    function startGame(categoryId) {
+      const filtered = wordList.filter(w => w.categoryId === categoryId);
+      gameState = {
+        screen: 'game',
+        categoryId: categoryId,
+        words: shuffleArray(filtered),
+        currentIndex: 0,
+        currentInput: '',
+        gameStatus: 'playing',
+        errorIndex: null,
+      };
+      render();
+    }
+
+    function goToMenu() {
+      gameState = {
+        screen: 'menu',
+        categoryId: null,
+        words: [],
+        currentIndex: 0,
+        currentInput: '',
+        gameStatus: 'playing',
+        errorIndex: null,
+      };
+      render();
+    }
+
+    function handleKeyPress(key) {
+      if (gameState.gameStatus !== 'playing' || gameState.words.length === 0) return;
+
+      const currentWord = gameState.words[gameState.currentIndex];
+      let actualInput = gameState.currentInput;
+      let actualTargetChar = currentWord.english[actualInput.length];
+
+      // スペース自動補完
+      if (actualTargetChar === ' ') {
+        actualInput += ' ';
+        actualTargetChar = currentWord.english[actualInput.length];
+      }
+
+      if (key.toLowerCase() === actualTargetChar.toLowerCase()) {
+        // 正解
+        let newInput = actualInput + actualTargetChar;
+        gameState.currentInput = newInput;
+        gameState.errorIndex = null;
+
+        // スペース自動補完
+        let finalInput = newInput;
+        while (currentWord.english[finalInput.length] === ' ') {
+          finalInput += ' ';
+        }
+        gameState.currentInput = finalInput;
+
+        // 全入力完了
+        if (finalInput.length === currentWord.english.length) {
+          gameState.gameStatus = 'correct';
+          setTimeout(() => {
+            if (gameState.currentIndex < gameState.words.length - 1) {
+              gameState.currentIndex++;
+              gameState.currentInput = '';
+              gameState.gameStatus = 'playing';
+            } else {
+              gameState.gameStatus = 'finished';
+            }
+            render();
+          }, 1000);
+        } else {
+          render();
+        }
+      } else {
+        // 不正解
+        gameState.errorIndex = actualInput.length;
+        setTimeout(() => {
+          gameState.errorIndex = null;
+          render();
+        }, 300);
+        render();
+      }
+    }
+
+    function attachEventListeners() {
+      // キーボード物理キー対応（オプション）
+      document.addEventListener('keydown', (e) => {
+        if (gameState.screen === 'game' && gameState.gameStatus === 'playing') {
+          const key = e.key.toLowerCase();
+          if (/^[a-z]$/.test(key)) {
+            handleKeyPress(key.toUpperCase());
+          }
+        }
+      });
+    }
+
+    // ============ 初期化 ============
+    render();
+  </script>
+</body>
+</html>

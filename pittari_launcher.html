@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>藤田塾 英語音声</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+  :root {
+    --bg: #0f1923;
+    --bg2: #162030;
+    --accent1: #f0522a;
+    --accent2: #f5a623;
+    --accent3: #4ecca3;
+    --accent4: #5b8dee;
+    --text: #eaeaea;
+    --muted: rgba(255,255,255,0.45);
+    --card: rgba(255,255,255,0.055);
+    --border: rgba(255,255,255,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 48px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #f0522a 0%, #c0392b 100%);
+    padding: 18px 16px 14px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(240,82,42,0.45);
+  }
+
+  header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: 0.5px;
+  }
+
+  header p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.82);
+    margin-top: 3px;
+  }
+
+  .tabs {
+    display: flex;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 68px;
+    z-index: 99;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 13px 8px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  .tab-content { display: none; padding: 14px 14px 0; }
+  .tab-content.active { display: block; }
+
+  /* セクションラベル */
+  .sec-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent3);
+    text-transform: uppercase;
+    margin: 18px 0 8px 2px;
+  }
+
+  /* プログラムカード */
+  .prog-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 9px;
+  }
+
+  .prog-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prog-title .bar {
+    width: 4px;
+    height: 15px;
+    border-radius: 2px;
+    background: var(--accent1);
+    flex-shrink: 0;
+  }
+
+  .prog-title .bar.y2 { background: var(--accent2); }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .abtn {
+    display: inline-block;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.13);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .abtn:active {
+    transform: scale(0.94);
+    background: var(--accent1);
+    border-color: var(--accent1);
+    color: white;
+  }
+
+  .abtn.y2:active { background: var(--accent2); border-color: var(--accent2); }
+  .abtn.sp:active { background: var(--accent3); border-color: var(--accent3); color: #111; }
+  .abtn.card:active { background: var(--accent4); border-color: var(--accent4); }
+
+  /* サブカード（単語・スピーキング等） */
+  .sub-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+
+  .sub-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .sub-name span {
+    font-size: 10px;
+    color: var(--muted);
+    display: block;
+    margin-top: 1px;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎧 藤田塾 英語音声</h1>
+  <p>教科書ぴったりトレーニング（開隆堂・サンシャイン）</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('g1', this)">中学1年</button>
+  <button class="tab-btn" onclick="switchTab('g2', this)">中学2年</button>
+</div>
+
+<!-- ===== 1年 ===== -->
+<div class="tab-content active" id="g1">
+
+  <div class="sec-label">Program</div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>Get Ready</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr0" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 1</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr1" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 2 〜 アクションコーナー</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr2" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 3 〜 Power-Up 1</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr3" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 4</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr4" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 5 〜 Power-Up 2</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr5" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 6</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr6" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 7 〜 Our Project 2</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr7" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 8 〜 Power-Up 4</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr8" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 9</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr9" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar"></span>PROGRAM 10 〜 Power-Up 6</div>
+    <div class="btn-row">
+      <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/pr10" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="sec-label">その他コンテンツ</div>
+
+  <div class="sub-row">
+    <div class="sub-name">レッツエンジョイ！スピーキング<span>会話練習</span></div>
+    <a class="abtn sp" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/s" target="_blank">開く</a>
+  </div>
+
+  <div class="sub-row">
+    <div class="sub-name">定期テスト予想問題<span>リスニング</span></div>
+    <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/t" target="_blank">開く</a>
+  </div>
+
+  <div class="sub-row">
+    <div class="sub-name">ぴたトレ mini book<span>まとめ音声</span></div>
+    <a class="abtn" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/f" target="_blank">開く</a>
+  </div>
+
+  <div class="sub-row">
+    <div class="sub-name">重要単語チェック！カード<span>単語練習</span></div>
+    <a class="abtn card" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd1/c" target="_blank">開く</a>
+  </div>
+
+</div>
+
+<!-- ===== 2年 ===== -->
+<div class="tab-content" id="g2">
+
+  <div class="sec-label">Program</div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 1</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr1" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 2 〜 Power-Up 1</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr2" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 3 〜 Power-Up 2</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr3" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 4 〜 Power-Up 3</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr4" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 5</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr5" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 6 〜 Reading 2</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr6" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 7</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr7" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-title"><span class="bar y2"></span>PROGRAM 8 〜 Reading 3</div>
+    <div class="btn-row">
+      <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/pr8" target="_blank">音声を開く</a>
+    </div>
+  </div>
+
+  <div class="sec-label">その他コンテンツ</div>
+
+  <div class="sub-row">
+    <div class="sub-name">レッツエンジョイ！スピーキング<span>会話練習</span></div>
+    <a class="abtn sp" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/s" target="_blank">開く</a>
+  </div>
+
+  <div class="sub-row">
+    <div class="sub-name">定期テスト予想問題<span>リスニング</span></div>
+    <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/t" target="_blank">開く</a>
+  </div>
+
+  <div class="sub-row">
+    <div class="sub-name">ぴたトレ mini book<span>まとめ音声</span></div>
+    <a class="abtn y2" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/f" target="_blank">開く</a>
+  </div>
+
+  <div class="sub-row">
+    <div class="sub-name">重要単語チェック！カード<span>単語練習</span></div>
+    <a class="abtn card" href="https://www.shinko-keirin.co.jp/shinko/junior/listening-pittari_training/kd2/c" target="_blank">開く</a>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(grade, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(grade).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
